@@ -1,7 +1,11 @@
-cmake_minimum_required(VERSION 3.8)
+set(CMAKE_VERBOSE_MAKEFILE ON)
+cmake_minimum_required(VERSION 3.9)
 project(mp3_tag_from_title)
-
 set(CMAKE_CXX_STANDARD 11)
+set(Taglib_DIR = /usr/local/Cellar/taglib)
+find_package(Boost 1.65.1 COMPONENTS program_options REQUIRED)
+set(CMAKE_CXX_FLAGS -ltag)
 
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES src/main.cpp src/Parser.cpp include/Parser.h)
 add_executable(mp3_tag_from_title ${SOURCE_FILES})
+target_link_libraries(mp3_tag_from_title ${Boost_LIBRARIES})
