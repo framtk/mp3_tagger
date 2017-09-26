@@ -13,6 +13,7 @@ class Parser {
     public:
         std::vector<std::string> splitString(std::string str, char splitChar);
         bool fileExists (const std::string& name);
+        bool isDir (const std::string& name);
 };
 
 

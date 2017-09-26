@@ -40,6 +40,10 @@ int main(int argc, const char *argv[]) {
                 return 2;
             }
 
+            if (parser.isDir(filename)){
+                // is directory, do fix
+            }
+
             std::vector<std::string> path_split = parser.splitString(filename, '/');
 
             TagLib::FileRef f(filename.c_str());

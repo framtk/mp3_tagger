@@ -22,3 +22,13 @@ bool Parser::fileExists (const std::string& name) {
     struct stat buffer{};
     return (stat (name.c_str(), &buffer) == 0);
 }
+
+bool Parser::isDir (const std::string& name) {
+    struct stat buffer{};
+    if (stat (name.c_str(), &buffer) == 0){
+        if (buffer.st_mode & S_IFDIR){
+            return true;
+        }
+    }
+    return false;
+}
