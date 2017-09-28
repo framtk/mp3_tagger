@@ -1,8 +1,13 @@
 #include <iostream>
 
 #include "../include/Parser.h"
-#include <taglib/fileref.h>
+#include <taglib/tbytevector.h>
+#include <taglib/mpegfile.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/id3v2frame.h>
+#include <taglib/attachedpictureframe.h>
 #include <boost/program_options.hpp>
+#include <fstream>
 
 namespace po = boost::program_options;
 
@@ -46,10 +51,24 @@ int main(int argc, const char *argv[]) {
 
             std::vector<std::string> path_split = parser.splitString(filename, '/');
 
-            TagLib::FileRef f(filename.c_str());
-            f.tag()->setTitle("");
-            std::cout << f.tag()->title();
-            f.save();
+            TagLib::MPEG::File mp3_file(filename.c_str());
+            TagLib::ID3v2::Tag *mp3_tag;
+
+            mp3_tag = mp3_file.ID3v2Tag(true);
+            TagLib::ID3v2::AttachedPictureFrame picture;
+            picture.setMimeType("image/jpeg");
+            picture.setDescription("Cover");
+            picture.setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
+
+            std::ifstream image(argv[2], std::ios::binary | std::ios::ate);
+            const auto fileSize = image.tellg();
+            image.seekg(0);
+            TagLib::ByteVector image_data((unsigned int) fileSize, 0);
+            image.read(image_data.data(), fileSize);
+            image.close();
+            picture.setPicture(image_data);
+            mp3_tag->addFrame(&picture);
+            mp3_file.save();
         }
 
         return 0;
