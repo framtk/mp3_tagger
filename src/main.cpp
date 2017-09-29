@@ -55,19 +55,19 @@ int main(int argc, const char *argv[]) {
             TagLib::ID3v2::Tag *mp3_tag;
 
             mp3_tag = mp3_file.ID3v2Tag(true);
-            TagLib::ID3v2::AttachedPictureFrame picture;
-            picture.setMimeType("image/jpeg");
-            picture.setDescription("Cover");
-            picture.setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
 
-            std::ifstream image(argv[2], std::ios::binary | std::ios::ate);
+            std::ifstream image("/Users/arrigf/Desktop/Music/maxresdefault.jpg", std::ios::binary | std::ios::ate);
             const auto fileSize = image.tellg();
             image.seekg(0);
             TagLib::ByteVector image_data((unsigned int) fileSize, 0);
             image.read(image_data.data(), fileSize);
             image.close();
-            picture.setPicture(image_data);
-            mp3_tag->addFrame(&picture);
+            auto *picture = new TagLib::ID3v2::AttachedPictureFrame();
+            picture->setMimeType("image/jpeg");
+            picture->setDescription("Cover");
+            picture->setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
+            picture->setPicture(image_data);
+            mp3_tag->addFrame(picture);
             mp3_file.save();
         }
 
