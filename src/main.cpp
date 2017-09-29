@@ -1,11 +1,7 @@
 #include <iostream>
 
 #include "../include/Parser.h"
-#include <taglib/tbytevector.h>
-#include <taglib/mpegfile.h>
-#include <taglib/id3v2tag.h>
-#include <taglib/id3v2frame.h>
-#include <taglib/attachedpictureframe.h>
+#include "../include/Tagger.h"
 #include <boost/program_options.hpp>
 #include <fstream>
 
@@ -50,28 +46,16 @@ int main(int argc, const char *argv[]) {
             }
 
             std::vector<std::string> path_split = parser.splitString(filename, '/');
-            std::string songname = parser.splitString(path_split[path_split.size() - 1],'.')[0];
-            TagLib::MPEG::File mp3_file(filename.c_str());
-            TagLib::ID3v2::Tag *mp3_tag;
+            std::string song_name = parser.splitString(path_split[path_split.size() - 1],'.')[0];
+            std::string image_dir = vm["picture"].as<std::string>();
 
-            mp3_tag = mp3_file.ID3v2Tag(true);
+            Tagger tagger;
 
-            std::stringstream stream;
-            stream << "/Users/arrigf/Desktop/Pictures/" << songname << ".jpg";
-            std::ifstream image(stream.str(), std::ios::binary | std::ios::ate);
-            stream.str(std::string());
-            const auto fileSize = image.tellg();
-            image.seekg(0);
-            TagLib::ByteVector image_data((unsigned int) fileSize, 0);
-            image.read(image_data.data(), fileSize);
-            image.close();
-            auto *picture = new TagLib::ID3v2::AttachedPictureFrame();
-            picture->setMimeType("image/jpeg");
-            picture->setDescription("Cover");
-            picture->setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
-            picture->setPicture(image_data);
-            mp3_tag->addFrame(picture);
-            mp3_file.save();
+            if (!tagger.tagFile(filename, song_name, image_dir)){
+                std::cerr << "There was an error tagging the file " << filename << " the program will close";
+                return 1;
+            }
+
         }
 
         return 0;

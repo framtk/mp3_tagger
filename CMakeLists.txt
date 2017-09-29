@@ -6,6 +6,6 @@ set(Taglib_DIR = /usr/local/Cellar/taglib)
 find_package(Boost 1.65.1 COMPONENTS program_options REQUIRED)
 set(CMAKE_CXX_FLAGS -ltag)
 
-set(SOURCE_FILES src/main.cpp src/Parser.cpp include/Parser.h)
+set(SOURCE_FILES src/main.cpp src/Parser.cpp include/Parser.h src/Tagger.cpp include/Tagger.h)
 add_executable(mp3_tag_from_title ${SOURCE_FILES})
 target_link_libraries(mp3_tag_from_title ${Boost_LIBRARIES})
