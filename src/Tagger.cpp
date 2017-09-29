@@ -4,6 +4,12 @@
 
 #include "../include/Tagger.h"
 #include <boost/program_options.hpp>
+#include <taglib/tbytevector.h>
+#include <taglib/mpegfile.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/id3v2frame.h>
+#include <taglib/attachedpictureframe.h>
+#include <fstream>
 
 bool Tagger::tagFile(std::string mp3_path, std::string song_name, std::string image_folder) {
     try {
