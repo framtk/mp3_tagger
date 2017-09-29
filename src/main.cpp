@@ -19,7 +19,7 @@ int main(int argc, const char *argv[]) {
                 ("clear,c", "Clears the tags before setting the title and author")
                 ("file,f", po::value<std::string>(), "Select and apply on a single .mp3 file")
                 ("dir,d", po::value<std::string>(), "Select and apply on all .mp3 files in a directory")
-                ("rename,r", "The file will be renamed with only the song title");
+                ("picture,p", po::value<std::string>(), "The folder containing the images to apply to the songs");
 
         po::variables_map vm;
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -50,13 +50,16 @@ int main(int argc, const char *argv[]) {
             }
 
             std::vector<std::string> path_split = parser.splitString(filename, '/');
-
+            std::string songname = parser.splitString(path_split[path_split.size() - 1],'.')[0];
             TagLib::MPEG::File mp3_file(filename.c_str());
             TagLib::ID3v2::Tag *mp3_tag;
 
             mp3_tag = mp3_file.ID3v2Tag(true);
 
-            std::ifstream image("/Users/arrigf/Desktop/Music/maxresdefault.jpg", std::ios::binary | std::ios::ate);
+            std::stringstream stream;
+            stream << "/Users/arrigf/Desktop/Pictures/" << songname << ".jpg";
+            std::ifstream image(stream.str(), std::ios::binary | std::ios::ate);
+            stream.str(std::string());
             const auto fileSize = image.tellg();
             image.seekg(0);
             TagLib::ByteVector image_data((unsigned int) fileSize, 0);
