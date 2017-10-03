@@ -32,3 +32,20 @@ bool Parser::isDir (const std::string& name) {
     }
     return false;
 }
+
+void Parser::ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
+        return !std::isspace(ch);
+    }));
+}
+
+void Parser::rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
+
+void Parser::trim(std::string &s) {
+    ltrim(s);
+    rtrim(s);
+}

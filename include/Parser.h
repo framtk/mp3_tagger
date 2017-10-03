@@ -14,6 +14,9 @@ class Parser {
         std::vector<std::string> splitString(std::string str, char splitChar);
         bool fileExists (const std::string& name);
         bool isDir (const std::string& name);
+        void ltrim (std::string &s);
+        void rtrim (std::string &s);
+        void trim (std::string &s);
 };
 
 

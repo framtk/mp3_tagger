@@ -47,12 +47,17 @@ int main(int argc, const char *argv[]) {
 
             std::vector<std::string> path_split = parser.splitString(filename, '/');
             std::string song_name = parser.splitString(path_split[path_split.size() - 1],'.')[0];
+            std::string author = parser.splitString(song_name,'-')[0];
+
+            parser.trim(song_name);
+            parser.trim(author);
+
             std::string image_dir = vm["picture"].as<std::string>();
 
             Tagger tagger;
 
-            if (!tagger.tagFile(filename, song_name, image_dir)){
-                std::cerr << "There was an error tagging the file " << filename << " the program will close";
+            if (!tagger.addPicture(filename, song_name, author, image_dir)){
+                std::cerr << "There was an error setting picture for " << song_name << "\n";
                 return 1;
             }
 
