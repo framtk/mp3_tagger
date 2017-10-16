@@ -33,7 +33,7 @@ bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string
         }
 
         std::stringstream stream;
-        stream << image_folder << song_name << ".jpg";
+        stream << image_folder << "/" << song_name << ".jpg";
 
         std::ifstream image;
 
@@ -47,7 +47,7 @@ bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string
                 image = std::ifstream(stream.str(), std::ios::binary | std::ios::ate);
                 stream.str(std::string());
             } else {
-                std::cerr << "No file named " << song_name << ".jpg" << " or " << author << ".jpg" << " in " << image_folder;
+                std::cerr << "No file named " << song_name << ".jpg" << " or " << author << ".jpg" << " in " << image_folder << "\n";
                 return false;
             }
         }
