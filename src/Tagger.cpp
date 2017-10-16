@@ -19,12 +19,13 @@ bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string
 
         TagLib::MPEG::File mp3_file(mp3_path.c_str());
         TagLib::ID3v2::Tag *mp3_tag;
-
         mp3_tag = mp3_file.ID3v2Tag(true);
+
+        std::cout << mp3_tag->title() << "\n";
 
         auto *mp3_frames = new TagLib::ID3v2::FrameList(mp3_tag->frameList());
 
-        // remove previous frame to not have the mp3 file grow
+        // remove previous picture to not have the mp3 file grow infinitely
         for (auto &frame : *mp3_frames) {
             if (frame->frameID() == "APIC"){
                 mp3_tag->removeFrame(frame, true);
@@ -73,8 +74,53 @@ bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string
     }
 }
 
-bool Tagger::tagFile(std::string mp3_path, std::string song_name) {
+bool Tagger::removeTags(std::string mp3_path){
+
     try {
+
+        TagLib::MPEG::File mp3_file(mp3_path.c_str());
+        TagLib::ID3v2::Tag *mp3_tag;
+        mp3_tag = mp3_file.ID3v2Tag(true);
+
+        auto *mp3_frames = new TagLib::ID3v2::FrameList(mp3_tag->frameList());
+
+        // remove previous picture to not have the mp3 file grow infinitely
+        for (auto &frame : *mp3_frames) {
+            if (frame->frameID() == "APIC"){
+                mp3_tag->removeFrame(frame, true);
+                break;
+            }
+        }
+
+        mp3_tag->setTitle(TagLib::String::null);
+        mp3_tag->setAlbum(TagLib::String::null);
+        mp3_tag->setArtist(TagLib::String::null);
+        mp3_tag->setComment(TagLib::String::null);
+        mp3_tag->setGenre(TagLib::String::null);
+        mp3_tag->setTrack(0);
+        mp3_tag->setYear(0);
+
+        mp3_file.save();
+
+        return true;
+
+    }catch (std::exception &e){
+        return false;
+    }
+}
+
+bool Tagger::tagFile(std::string mp3_path, std::string song_name, std::string author) {
+    try {
+
+        TagLib::MPEG::File mp3_file(mp3_path.c_str());
+        TagLib::ID3v2::Tag *mp3_tag;
+        mp3_tag = mp3_file.ID3v2Tag(true);
+
+        mp3_tag->setTitle(song_name);
+        mp3_tag->setArtist(author);
+        mp3_tag->setComment("Tagged with mp3_tagger");
+
+        mp3_file.save();
 
     } catch (std::exception &e){
         return false;

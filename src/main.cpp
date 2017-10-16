@@ -12,7 +12,7 @@ int main(int argc, const char *argv[]) {
         po::options_description desc("Allowed options");
         desc.add_options()
                 ("help", "Produce help message")
-                ("clear,c", "Clears the tags before setting the title and author")
+                ("overwrite,o", "Force tag overwrite if they are already present")
                 ("file,f", po::value<std::string>(), "Select and apply on a single .mp3 file")
                 ("dir,d", po::value<std::string>(), "Select and apply on all .mp3 files in a directory")
                 ("picture,p", po::value<std::string>(), "The folder containing the images to apply to the songs");
@@ -41,26 +41,44 @@ int main(int argc, const char *argv[]) {
                 return 2;
             }
 
-            if (parser.isDir(filename)){
-                // is directory, do fix
-            }
-
             std::vector<std::string> path_split = parser.splitString(filename, '/');
             std::string song_name = parser.splitString(path_split[path_split.size() - 1],'.')[0];
             std::string author = parser.splitString(song_name,'-')[0];
+            std::string song_title = parser.splitString(song_name, '-')[1];
 
             parser.trim(song_name);
             parser.trim(author);
+            parser.trim(song_title);
 
-            std::string image_dir = vm["picture"].as<std::string>();
-
+//
             Tagger tagger;
 
-            if (!tagger.addPicture(filename, song_name, author, image_dir)){
-                std::cerr << "There was an error setting picture for " << song_name << "\n";
-                return 1;
+            if (vm.count("overwrite")) {
+                if (!tagger.removeTags(filename)) {
+                    std::cerr << "There was an error removing the tags of " << song_name << "\n";
+                    return 1;
+                };
             }
 
+            tagger.tagFile(filename, song_title, author);
+
+
+            if (vm.count("picture")) {
+                std::string image_dir = vm["picture"].as<std::string>();
+
+                if (!tagger.addPicture(filename, song_name, author, image_dir)) {
+                    std::cerr << "There was an error setting picture for " << song_name << "\n";
+                    return 1;
+                }
+            }
+        }
+
+        else if (vm.count("dir")){
+            std::string dirname = vm["dir"].as<std::string>();
+            if (!parser.isDir(dirname)){
+                std::cerr << "The chosen path isn't a directory or the directory doesn't exist!\n";
+                return 2;
+            }
         }
 
         return 0;
