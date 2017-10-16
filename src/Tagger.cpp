@@ -11,6 +11,7 @@
 #include <taglib/tstringlist.h>
 #include <taglib/attachedpictureframe.h>
 #include <fstream>
+#include <taglib/urllinkframe.h>
 
 bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string author, std::string image_folder){
     try {
@@ -21,17 +22,8 @@ bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string
         TagLib::ID3v2::Tag *mp3_tag;
         mp3_tag = mp3_file.ID3v2Tag(true);
 
-        std::cout << mp3_tag->title() << "\n";
-
-        auto *mp3_frames = new TagLib::ID3v2::FrameList(mp3_tag->frameList());
-
-        // remove previous picture to not have the mp3 file grow infinitely
-        for (auto &frame : *mp3_frames) {
-            if (frame->frameID() == "APIC"){
-                mp3_tag->removeFrame(frame, true);
-                break;
-            }
-        }
+        // remove previous pictures to not have the mp3 file grow infinitely
+        mp3_tag->removeFrames("APIC");
 
         std::stringstream stream;
         stream << image_folder << "/" << song_name << ".jpg";
@@ -65,7 +57,7 @@ bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string
         picture->setType(TagLib::ID3v2::AttachedPictureFrame::FrontCover);
         picture->setPicture(image_data);
         mp3_tag->addFrame(picture);
-        mp3_file.save();
+        mp3_file.save(TagLib::MPEG::File::ID3v2);
 
         return true;
 
@@ -82,25 +74,16 @@ bool Tagger::removeTags(std::string mp3_path){
         TagLib::ID3v2::Tag *mp3_tag;
         mp3_tag = mp3_file.ID3v2Tag(true);
 
-        auto *mp3_frames = new TagLib::ID3v2::FrameList(mp3_tag->frameList());
+        mp3_tag->removeFrames("TCON");
+        mp3_tag->removeFrames("TRCK");
+        mp3_tag->removeFrames("TDRC");
+        mp3_tag->removeFrames("TIT2");
+        mp3_tag->removeFrames("TPE1");
+        mp3_tag->removeFrames("COMM");
+        mp3_tag->removeFrames("APIC");
+        mp3_tag->removeFrames("WXXX");
 
-        // remove previous picture to not have the mp3 file grow infinitely
-        for (auto &frame : *mp3_frames) {
-            if (frame->frameID() == "APIC"){
-                mp3_tag->removeFrame(frame, true);
-                break;
-            }
-        }
-
-        mp3_tag->setTitle(TagLib::String::null);
-        mp3_tag->setAlbum(TagLib::String::null);
-        mp3_tag->setArtist(TagLib::String::null);
-        mp3_tag->setComment(TagLib::String::null);
-        mp3_tag->setGenre(TagLib::String::null);
-        mp3_tag->setTrack(0);
-        mp3_tag->setYear(0);
-
-        mp3_file.save();
+        mp3_file.save(TagLib::MPEG::File::ID3v2);
 
         return true;
 
@@ -116,11 +99,15 @@ bool Tagger::tagFile(std::string mp3_path, std::string song_name, std::string au
         TagLib::ID3v2::Tag *mp3_tag;
         mp3_tag = mp3_file.ID3v2Tag(true);
 
+        auto *url = new TagLib::ID3v2::UserUrlLinkFrame();
+        url->setUrl("https://github.com/framtk/mp3_tagger");
+        url->setText("Git repo");
         mp3_tag->setTitle(song_name);
         mp3_tag->setArtist(author);
         mp3_tag->setComment("Tagged with mp3_tagger");
+        mp3_tag->addFrame(url);
 
-        mp3_file.save();
+        mp3_file.save(TagLib::MPEG::File::ID3v2);
 
     } catch (std::exception &e){
         return false;
