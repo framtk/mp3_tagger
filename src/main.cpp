@@ -2,7 +2,6 @@
 
 #include "../include/Parser.h"
 #include "../include/Tagger.h"
-#include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
 namespace po = boost::program_options;
