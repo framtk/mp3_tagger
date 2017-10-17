@@ -44,7 +44,10 @@ int main(int argc, const char *argv[]) {
                 return 2;
             }
 
-            tagger.apply(vm, filename);
+            if (!tagger.apply(vm, filename)){
+                std::cerr << "There was an error tagging the file " << filename << "\n";
+                return 2;
+            }
 
         } else if (vm.count("dir")) {
             std::string dirname = vm["dir"].as<std::string>();
@@ -70,7 +73,9 @@ int main(int argc, const char *argv[]) {
 
                 current_filename = itr->path().string();
                 if (parser.splitString(current_filename, '.').back() == "mp3") {
-                    tagger.apply(vm, current_filename);
+                    if (!tagger.apply(vm, current_filename)){
+                        std::cerr << "There was an error tagging the file " << current_filename << "\n";
+                    }
                     count++;
                     std::cout << "Done " << count << " of " << total << " - " << current_filename << "\n";
                 }

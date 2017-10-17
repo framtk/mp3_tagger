@@ -4,7 +4,6 @@
 
 #include "../include/Tagger.h"
 #include "../include/Parser.h"
-#include <boost/program_options.hpp>
 #include <taglib/tbytevector.h>
 #include <taglib/mpegfile.h>
 #include <taglib/id3v2tag.h>
@@ -119,47 +118,51 @@ bool Tagger::tagFile(std::string mp3_path, std::string song_name, std::string au
 
 bool Tagger::apply(po::variables_map vm, std::string filename) {
 
-    bool verbose = vm.count("verbose") != 0;
+    try {
+        bool verbose = vm.count("verbose") != 0;
 
-    Parser parser;
+        Parser parser;
 
-    std::vector<std::string> path_split = parser.splitString(filename, '/');
-    std::string song_name = parser.splitString(path_split[path_split.size() - 1], '.').end()[-2];
-    std::string author = parser.splitString(song_name, '-')[0];
-    std::string song_title = parser.splitString(song_name, '-')[1];
+        std::vector<std::string> path_split = parser.splitString(filename, '/');
+        std::string song_name = parser.splitString(path_split[path_split.size() - 1], '.').end()[-2];
+        std::string author = parser.splitString(song_name, '-')[0];
+        std::string song_title = parser.splitString(song_name, '-')[1];
 
-    parser.trim(song_name);
-    parser.trim(author);
-    parser.trim(song_title);
+        parser.trim(song_name);
+        parser.trim(author);
+        parser.trim(song_title);
 
-    if (vm.count("clear")) {
-        if (verbose)
-            std::cout << "Clearing " << song_name << " tags...\n";
-        if (!removeTags(filename)) {
-            std::cerr << "There was an error removing the tags of " << song_name << "\n";
-            return false;
-        };
-    }
-
-
-    if (vm.count("tag")) {
-        if (verbose)
-            std::cout << "Tagging " << song_name << "...\n";
-        if (!tagFile(filename, song_title, author)){
-            std::cerr << "There was an error tagging " << song_name << "\n";
-            return false;
+        if (vm.count("clear")) {
+            if (verbose)
+                std::cout << "Clearing " << song_name << " tags...\n";
+            if (!removeTags(filename)) {
+                std::cerr << "There was an error removing the tags of " << song_name << "\n";
+                return false;
+            };
         }
-    }
 
-    if (vm.count("picture")) {
-        std::string image_dir = vm["picture"].as<std::string>();
-        if (verbose)
-            std::cout << "Setting " << song_name << " picture...\n";
 
-        if (!addPicture(filename, song_name, author, image_dir)) {
-            std::cerr << "There was an error setting picture for " << song_name << "\n";
-            return false;
+        if (vm.count("tag")) {
+            if (verbose)
+                std::cout << "Tagging " << song_name << "...\n";
+            if (!tagFile(filename, song_title, author)) {
+                std::cerr << "There was an error tagging " << song_name << "\n";
+                return false;
+            }
         }
+
+        if (vm.count("picture")) {
+            std::string image_dir = vm["picture"].as<std::string>();
+            if (verbose)
+                std::cout << "Setting " << song_name << " picture...\n";
+
+            if (!addPicture(filename, song_name, author, image_dir)) {
+                std::cerr << "There was an error setting picture for " << song_name << "\n";
+                return false;
+            }
+        }
+    } catch (std::exception &e){
+        return false;
     }
     return true;
 }
