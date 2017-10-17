@@ -12,6 +12,8 @@ I am by no means and expert in C++ so if you find any problems and/or want to pr
 How to compile
 ----
 Move to the program directory, open **CMakeLists.txt** and edit the TagLib path to your local TagLib. After having edited the file run ***cmake CmakeLists.txt***, then run ***make*** and an executable called ***mp3_tagger*** should be created in the same directory.  
+
+Alternatively it's possible to download the latest release from GitHub.
  
  How to run
 ----
