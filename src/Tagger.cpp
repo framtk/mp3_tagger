@@ -36,7 +36,7 @@ bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string
             stream.str(std::string());
         } else {
             stream.str(std::string());
-            stream << image_folder << author << ".jpg";
+            stream << image_folder << "/" << author << ".jpg";
             if (parser.fileExists(stream.str())) {
                 image = std::ifstream(stream.str(), std::ios::binary | std::ios::ate);
                 stream.str(std::string());
@@ -124,7 +124,8 @@ bool Tagger::apply(po::variables_map vm, std::string filename) {
         Parser parser;
 
         std::vector<std::string> path_split = parser.splitString(filename, '/');
-        std::string song_name = parser.splitString(path_split[path_split.size() - 1], '.').end()[-2];
+        std::string song_name = path_split[path_split.size() - 1];
+        song_name.erase(song_name.length() - 4);
         std::string author = parser.splitString(song_name, '-')[0];
         std::string song_title = parser.splitString(song_name, '-')[1];
 
