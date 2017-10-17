@@ -4,7 +4,6 @@
 #include "../include/Tagger.h"
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
-#include <fstream>
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
@@ -18,7 +17,8 @@ int main(int argc, const char *argv[]) {
                 ("clear,c", "Clears the tags, if -t is used the tags will be cleared before being set")
                 ("file,f", po::value<std::string>(), "Select and apply on a single .mp3 file")
                 ("dir,d", po::value<std::string>(), "Select and apply on all .mp3 files in a directory")
-                ("picture,p", po::value<std::string>(), "The folder containing the images to apply to the songs");
+                ("picture,p", po::value<std::string>(), "The folder containing the images to apply to the songs")
+                ("verbose,v", "Sets verbose output");
 
         po::variables_map vm;
         po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -35,6 +35,7 @@ int main(int argc, const char *argv[]) {
         }
 
         Parser parser;
+        Tagger tagger;
 
         if (vm.count("file")) {
             std::string filename = vm["file"].as<std::string>();
@@ -44,44 +45,7 @@ int main(int argc, const char *argv[]) {
                 return 2;
             }
 
-            // TODO: DUPLICATE CODE, FIND A WAY TO REMOVE
-
-            std::vector<std::string> path_split = parser.splitString(filename, '/');
-            std::string song_name = parser.splitString(path_split[path_split.size() - 1], '.')[0];
-            std::string author = parser.splitString(song_name, '-')[0];
-            std::string song_title = parser.splitString(song_name, '-')[1];
-
-            parser.trim(song_name);
-            parser.trim(author);
-            parser.trim(song_title);
-
-            Tagger tagger;
-
-            if (vm.count("clear")) {
-                std::cout << "Clearing " << song_name << " tags...\n";
-
-                if (!tagger.removeTags(filename)) {
-                    std::cerr << "There was an error removing the tags of " << song_name << "\n";
-                    return 1;
-                };
-            }
-
-
-            if (vm.count("tag")) {
-                std::cout << "Tagging " << song_name << "...\n";
-                tagger.tagFile(filename, song_title, author);
-            }
-
-            if (vm.count("picture")) {
-                std::string image_dir = vm["picture"].as<std::string>();
-                std::cout << "Setting " << song_name << " picture...\n";
-
-                if (!tagger.addPicture(filename, song_name, author, image_dir)) {
-                    std::cerr << "There was an error setting picture for " << song_name << "\n";
-                    return 1;
-                }
-            }
-            // TODO: DUPLICATE CODE, FIND A WAY TO REMOVE
+            tagger.apply(vm, filename);
 
         } else if (vm.count("dir")) {
             std::string dirname = vm["dir"].as<std::string>();
@@ -90,50 +54,26 @@ int main(int argc, const char *argv[]) {
                 return 2;
             }
 
+            int total = 0;
+            int count = 0;
+            std::string current_filename;
+
             fs::path dirpath = dirname;
             fs::directory_iterator end_it;
             for (fs::directory_iterator itr(dirpath); itr != end_it; ++itr)
             {
-                std::string current_filename = itr->path().string();
-                if (parser.splitString(current_filename, '.')[1] == "mp3") {
+                current_filename = itr->path().string();
+                if (parser.splitString(current_filename, '.').back() == "mp3")
+                    total++;
+            }
 
-                    // TODO: DUPLICATE CODE, FIND A WAY TO REMOVE
+            for (fs::directory_iterator itr(dirpath); itr != end_it; ++itr){
 
-                    std::vector<std::string> current_path_split = parser.splitString(current_filename, '/');
-                    std::string current_song_name = parser.splitString(current_path_split[current_path_split.size() - 1], '.')[0];
-                    std::string current_author = parser.splitString(current_song_name, '-')[0];
-                    std::string current_song_title = parser.splitString(current_song_name, '-')[1];
-
-                    parser.trim(current_song_name);
-                    parser.trim(current_author);
-                    parser.trim(current_song_title);
-
-                    Tagger tagger;
-
-                    if (vm.count("clear")) {
-                        std::cout << "Clearing " << current_song_name << " tags...\n";
-
-                        if (!tagger.removeTags(current_filename)) {
-                            std::cerr << "There was an error removing the tags of " << current_song_name << "\n";
-                        };
-                    }
-
-
-                    if (vm.count("tag")) {
-                        std::cout << "Tagging " << current_song_name << "...\n";
-                        tagger.tagFile(current_filename, current_song_title, current_author);
-                    }
-
-                    if (vm.count("picture")) {
-                        std::string image_dir = vm["picture"].as<std::string>();
-                        std::cout << "Setting " << current_song_name << " picture...\n";
-
-                        if (!tagger.addPicture(current_filename, current_song_name, current_author, image_dir)) {
-                            std::cerr << "There was an error setting picture for " << current_song_name << "\n";
-                        }
-                    }
-
-                    // TODO: DUPLICATE CODE, FIND A WAY TO REMOVE
+                current_filename = itr->path().string();
+                if (parser.splitString(current_filename, '.').back() == "mp3") {
+                    tagger.apply(vm, current_filename);
+                    count++;
+                    std::cout << "Done " << count << " of " << total << " - " << current_filename << "\n";
                 }
             }
         }
