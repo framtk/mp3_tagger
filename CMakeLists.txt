@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.9)
 project(mp3_tag_from_title)
 set(CMAKE_CXX_STANDARD 11)
 set(Taglib_DIR = /usr/local/Cellar/taglib)
-find_package(Boost 1.65.1 COMPONENTS program_options REQUIRED)
+find_package(Boost 1.65.1 COMPONENTS program_options filesystem REQUIRED)
 set(CMAKE_CXX_FLAGS -ltag)
 
 set(SOURCE_FILES src/main.cpp src/Parser.cpp include/Parser.h src/Tagger.cpp include/Tagger.h)

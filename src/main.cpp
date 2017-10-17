@@ -3,9 +3,11 @@
 #include "../include/Parser.h"
 #include "../include/Tagger.h"
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
 #include <fstream>
 
 namespace po = boost::program_options;
+namespace fs = boost::filesystem;
 
 int main(int argc, const char *argv[]) {
     try {
@@ -13,7 +15,7 @@ int main(int argc, const char *argv[]) {
         desc.add_options()
                 ("help", "Produce help message")
                 ("tag,t", "Tags the selected file/all the files in the folder")
-                ("clear,c", "Clears the tags, if -s is used the tags will be cleared before being saves")
+                ("clear,c", "Clears the tags, if -t is used the tags will be cleared before being set")
                 ("file,f", po::value<std::string>(), "Select and apply on a single .mp3 file")
                 ("dir,d", po::value<std::string>(), "Select and apply on all .mp3 files in a directory")
                 ("picture,p", po::value<std::string>(), "The folder containing the images to apply to the songs");
@@ -41,6 +43,8 @@ int main(int argc, const char *argv[]) {
                 std::cerr << "The chosen file doesn't exist!\n";
                 return 2;
             }
+
+            // TODO: DUPLICATE CODE, FIND A WAY TO REMOVE
 
             std::vector<std::string> path_split = parser.splitString(filename, '/');
             std::string song_name = parser.splitString(path_split[path_split.size() - 1], '.')[0];
@@ -77,6 +81,8 @@ int main(int argc, const char *argv[]) {
                     return 1;
                 }
             }
+            // TODO: DUPLICATE CODE, FIND A WAY TO REMOVE
+
         } else if (vm.count("dir")) {
             std::string dirname = vm["dir"].as<std::string>();
             if (!parser.isDir(dirname)) {
@@ -84,6 +90,52 @@ int main(int argc, const char *argv[]) {
                 return 2;
             }
 
+            fs::path dirpath = dirname;
+            fs::directory_iterator end_it;
+            for (fs::directory_iterator itr(dirpath); itr != end_it; ++itr)
+            {
+                std::string current_filename = itr->path().string();
+                if (parser.splitString(current_filename, '.')[1] == "mp3") {
+
+                    // TODO: DUPLICATE CODE, FIND A WAY TO REMOVE
+
+                    std::vector<std::string> current_path_split = parser.splitString(current_filename, '/');
+                    std::string current_song_name = parser.splitString(current_path_split[current_path_split.size() - 1], '.')[0];
+                    std::string current_author = parser.splitString(current_song_name, '-')[0];
+                    std::string current_song_title = parser.splitString(current_song_name, '-')[1];
+
+                    parser.trim(current_song_name);
+                    parser.trim(current_author);
+                    parser.trim(current_song_title);
+
+                    Tagger tagger;
+
+                    if (vm.count("clear")) {
+                        std::cout << "Clearing " << current_song_name << " tags...\n";
+
+                        if (!tagger.removeTags(current_filename)) {
+                            std::cerr << "There was an error removing the tags of " << current_song_name << "\n";
+                        };
+                    }
+
+
+                    if (vm.count("tag")) {
+                        std::cout << "Tagging " << current_song_name << "...\n";
+                        tagger.tagFile(current_filename, current_song_title, current_author);
+                    }
+
+                    if (vm.count("picture")) {
+                        std::string image_dir = vm["picture"].as<std::string>();
+                        std::cout << "Setting " << current_song_name << " picture...\n";
+
+                        if (!tagger.addPicture(current_filename, current_song_name, current_author, image_dir)) {
+                            std::cerr << "There was an error setting picture for " << current_song_name << "\n";
+                        }
+                    }
+
+                    // TODO: DUPLICATE CODE, FIND A WAY TO REMOVE
+                }
+            }
         }
 
         std::cout << "Tagging complete, enjoy your music!\n";
