@@ -26,7 +26,7 @@ int main(int argc, const char *argv[]) {
 
         if (vm.count("help")) {
             std::cout << desc << "\n";
-            return 1;
+            return 0;
         }
 
         if (!(vm.count("file") || vm.count("dir"))) {
