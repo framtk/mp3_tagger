@@ -107,6 +107,7 @@ bool Tagger::tagFile(std::string mp3_path, std::string song_name, std::string au
         mp3_tag->setTitle(song_name);
         mp3_tag->setArtist(author);
         mp3_tag->setComment("Tagged with mp3_tagger");
+        mp3_tag->setAlbum(author + " - " + song_name);
         mp3_tag->addFrame(url);
 
         mp3_file.save(TagLib::MPEG::File::ID3v2);
