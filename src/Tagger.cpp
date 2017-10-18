@@ -83,6 +83,7 @@ bool Tagger::removeTags(std::string mp3_path){
         mp3_tag->removeFrames("COMM");
         mp3_tag->removeFrames("APIC");
         mp3_tag->removeFrames("WXXX");
+        mp3_tag->removeFrames("TALB");
 
         mp3_file.save(TagLib::MPEG::File::ID3v2);
 
