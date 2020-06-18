@@ -11,7 +11,7 @@ int main(int argc, const char *argv[]) {
     try {
         po::options_description desc("Allowed options");
         desc.add_options()
-                ("help", "Produce help message")
+                ("help,h", "Produce help message")
                 ("tag,t", "Tags the selected file/all the files in the folder")
                 ("clear,c", "Clears the tags, if -t is used the tags will be cleared before being set")
                 ("file,f", po::value<std::string>(), "Select and apply on a single .mp3 file")
@@ -29,7 +29,7 @@ int main(int argc, const char *argv[]) {
         }
 
         if (!(vm.count("file") || vm.count("dir"))) {
-            std::cerr << "Please select a file or a directory \nUse --help to show the available arguments\n";
+            std::cerr << "Please select a file or a directory \nUse --help or -h to show the available arguments\n";
             return 1;
         }
 

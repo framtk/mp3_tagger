@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mp3_tagger", "mp3_tagger\mp3_tagger.vcxproj", "{E11E4A67-6602-4820-A088-769E5EB345C6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E11E4A67-6602-4820-A088-769E5EB345C6}.Debug|x64.ActiveCfg = Debug|x64
+		{E11E4A67-6602-4820-A088-769E5EB345C6}.Debug|x64.Build.0 = Debug|x64
+		{E11E4A67-6602-4820-A088-769E5EB345C6}.Release|x64.ActiveCfg = Release|x64
+		{E11E4A67-6602-4820-A088-769E5EB345C6}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC870AEF-1DA9-4852-B0C3-523D4372C7B3}
+	EndGlobalSection
+EndGlobal
