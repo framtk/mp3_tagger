@@ -18,6 +18,7 @@ Move to the program directory, open **CMakeLists.txt** and edit the TagLib path 
 Alternatively it's possible to download the latest release from GitHub.
 
 ***Windows:***
+
 A Visual Studio 2019 solution is available, change the paths to the libraries accordingly with your local paths if needed and it should compile out of the box.
 
 It should also work with Visual Studio 2015 and 2017 but I haven't tested it
