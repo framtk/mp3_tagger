@@ -44,7 +44,9 @@ int main(int argc, const char *argv[]) {
                 return 2;
             }
 
-            if (!tagger.apply(vm, filename)){
+            fs::path file_path = filename;
+            fs::directory_iterator itr(filename);
+            if (!tagger.apply(vm, itr)){
                 std::cerr << "There was an error tagging the file " << filename << "\n";
                 return 2;
             }
@@ -62,18 +64,16 @@ int main(int argc, const char *argv[]) {
 
             fs::path dirpath = dirname;
             fs::directory_iterator end_it;
-            for (fs::directory_iterator itr(dirpath); itr != end_it; ++itr)
-            {
-                current_filename = itr->path().string();
+            for (fs::directory_iterator itr(dirpath); itr != end_it; ++itr){
+                current_filename = itr->path().filename().string();
                 if (parser.splitString(current_filename, '.').back() == "mp3")
                     total++;
             }
 
             for (fs::directory_iterator itr(dirpath); itr != end_it; ++itr){
-
-                current_filename = itr->path().string();
+                current_filename = itr->path().filename().string();
                 if (parser.splitString(current_filename, '.').back() == "mp3") {
-                    if (!tagger.apply(vm, current_filename)){
+                    if (!tagger.apply(vm, itr)){
                         std::cerr << "There was an error tagging the file " << current_filename << "\n";
                     }
                     count++;

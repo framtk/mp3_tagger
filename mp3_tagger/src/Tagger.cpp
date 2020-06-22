@@ -11,15 +11,17 @@
 #include <taglib/attachedpictureframe.h>
 #include <fstream>
 #include <taglib/urllinkframe.h>
+#include <boost/filesystem.hpp>
 
 namespace po = boost::program_options;
+namespace fs = boost::filesystem;
 
-bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string author, std::string image_folder){
+bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::string song_name, std::string author, std::string image_folder){
     try {
 
         Parser parser;
 
-        TagLib::MPEG::File mp3_file(mp3_path.c_str());
+        TagLib::MPEG::File mp3_file(mp3_path_itr->path().c_str());
         TagLib::ID3v2::Tag *mp3_tag;
         mp3_tag = mp3_file.ID3v2Tag(true);
 
@@ -27,7 +29,7 @@ bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string
         mp3_tag->removeFrames("APIC");
 
         std::stringstream stream;
-        stream << image_folder << "/" << song_name << ".jpg";
+        stream << image_folder << DIR_SEPARATOR << song_name << ".jpg";
 
         std::ifstream image;
 
@@ -36,7 +38,7 @@ bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string
             stream.str(std::string());
         } else {
             stream.str(std::string());
-            stream << image_folder << "/" << author << ".jpg";
+            stream << image_folder << DIR_SEPARATOR << author << ".jpg";
             if (parser.fileExists(stream.str())) {
                 image = std::ifstream(stream.str(), std::ios::binary | std::ios::ate);
                 stream.str(std::string());
@@ -67,11 +69,11 @@ bool Tagger::addPicture(std::string mp3_path, std::string song_name, std::string
     }
 }
 
-bool Tagger::removeTags(std::string mp3_path){
+bool Tagger::removeTags(fs::directory_iterator mp3_path_itr){
 
     try {
 
-        TagLib::MPEG::File mp3_file(mp3_path.c_str());
+        TagLib::MPEG::File mp3_file(mp3_path_itr->path().c_str());
         TagLib::ID3v2::Tag *mp3_tag;
         mp3_tag = mp3_file.ID3v2Tag(true);
 
@@ -94,10 +96,10 @@ bool Tagger::removeTags(std::string mp3_path){
     }
 }
 
-bool Tagger::tagFile(std::string mp3_path, std::string song_name, std::string author) {
+bool Tagger::tagFile(fs::directory_iterator mp3_path_itr, std::string song_name, std::string author) {
     try {
 
-        TagLib::MPEG::File mp3_file(mp3_path.c_str());
+        TagLib::MPEG::File mp3_file(mp3_path_itr->path().c_str());
         TagLib::ID3v2::Tag *mp3_tag;
         mp3_tag = mp3_file.ID3v2Tag(true);
 
@@ -118,15 +120,14 @@ bool Tagger::tagFile(std::string mp3_path, std::string song_name, std::string au
     return true;
 }
 
-bool Tagger::apply(po::variables_map vm, std::string filename) {
+bool Tagger::apply(po::variables_map vm, fs::directory_iterator file_path_itr) {
 
     try {
         bool verbose = vm.count("verbose") != 0;
 
         Parser parser;
 
-        std::vector<std::string> path_split = parser.splitString(filename, '/');
-        std::string song_name = path_split[path_split.size() - 1];
+        std::string song_name = file_path_itr->path().filename().string();
         song_name.erase(song_name.length() - 4);
         std::string author = parser.splitString(song_name, '-')[0];
         std::string song_title = parser.splitString(song_name, '-')[1];
@@ -138,7 +139,7 @@ bool Tagger::apply(po::variables_map vm, std::string filename) {
         if (vm.count("clear")) {
             if (verbose)
                 std::cout << "Clearing " << song_name << " tags...\n";
-            if (!removeTags(filename)) {
+            if (!removeTags(file_path_itr)) {
                 std::cerr << "There was an error removing the tags of " << song_name << "\n";
                 return false;
             };
@@ -148,7 +149,7 @@ bool Tagger::apply(po::variables_map vm, std::string filename) {
         if (vm.count("tag")) {
             if (verbose)
                 std::cout << "Tagging " << song_name << "...\n";
-            if (!tagFile(filename, song_title, author)) {
+            if (!tagFile(file_path_itr, song_title, author)) {
                 std::cerr << "There was an error tagging " << song_name << "\n";
                 return false;
             }
@@ -159,7 +160,7 @@ bool Tagger::apply(po::variables_map vm, std::string filename) {
             if (verbose)
                 std::cout << "Setting " << song_name << " picture...\n";
 
-            if (!addPicture(filename, song_name, author, image_dir)) {
+            if (!addPicture(file_path_itr, song_name, author, image_dir)) {
                 std::cerr << "There was an error setting picture for " << song_name << "\n";
                 return false;
             }
