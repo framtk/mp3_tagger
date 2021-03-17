@@ -91,7 +91,7 @@ bool Tagger::removeTags(fs::directory_iterator mp3_path_itr){
 
         return true;
 
-    }catch (std::exception &e){
+    }catch (std::exception){
         return false;
     }
 }
@@ -114,7 +114,7 @@ bool Tagger::tagFile(fs::directory_iterator mp3_path_itr, std::string song_name,
 
         mp3_file.save(TagLib::MPEG::File::ID3v2);
 
-    } catch (std::exception &e){
+    } catch (std::exception){
         return false;
     }
     return true;
