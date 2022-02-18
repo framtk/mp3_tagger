@@ -4,7 +4,6 @@
 
 #include "../include/Parser.h"
 #include <sstream>
-#include <sys/stat.h>
 
 std::vector<std::wstring> Parser::splitString(std::wstring str, wchar_t splitChar) {
     std::wstringstream temp(str);
@@ -19,8 +18,7 @@ std::vector<std::wstring> Parser::splitString(std::wstring str, wchar_t splitCha
 }
 
 bool Parser::fileExists (const std::wstring& name) {
-    struct _stat64i32 buffer{};
-    return (_wstat(name.c_str(), &buffer) == 0);
+    return (_waccess(src.c_str(), 0) == 0);
 }
 
 bool Parser::isDir (const std::string& name) {
