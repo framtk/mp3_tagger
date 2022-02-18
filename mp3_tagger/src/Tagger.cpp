@@ -77,7 +77,7 @@ bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_n
 		return true;
 
 	}
-	catch (std::exception& e) {
+	catch (std::exception) {
 		return false;
 	}
 }
@@ -181,7 +181,7 @@ bool Tagger::apply(po::variables_map vm, fs::directory_iterator file_path_itr) {
 			}
 		}
 	}
-	catch (std::exception& e) {
+	catch (std::exception) {
 		return false;
 	}
 	return true;
