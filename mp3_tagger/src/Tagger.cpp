@@ -74,6 +74,8 @@ bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_n
 		mp3_tag->addFrame(picture);
 		mp3_file.save(TagLib::MPEG::File::ID3v2);
 
+		delete picture;
+		
 		return true;
 
 	}
@@ -128,6 +130,8 @@ bool Tagger::tagFile(fs::directory_iterator mp3_path_itr, std::wstring song_name
 
 		mp3_file.save(TagLib::MPEG::File::ID3v2);
 
+		delete url;
+		
 	}
 	catch (std::exception) {
 		return false;
