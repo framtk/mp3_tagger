@@ -7,20 +7,16 @@
 
 #include <vector>
 #include <string>
-#include <locale>
-#include <codecvt>
-#include <string>
+
 
 class Parser {
     public:
-        std::vector<std::wstring> splitString(std::wstring str, wchar_t splitChar);
-        bool fileExists (const std::wstring& name);
+        std::vector<std::string> splitString(std::string str, char splitChar);
+        bool fileExists (const std::string& name);
         bool isDir (const std::string& name);
-        void ltrim (std::wstring &s);
-        void rtrim (std::wstring &s);
-        void trim (std::wstring &s);
-
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        void ltrim (std::string &s);
+        void rtrim (std::string &s);
+        void trim (std::string &s);
 };
 
 
