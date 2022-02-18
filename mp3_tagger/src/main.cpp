@@ -71,6 +71,13 @@ int main(int argc, const char* argv[]) {
 					total++;
 			}
 
+			// This fixed wcout breaking for some characters when printing
+			std::ios_base::sync_with_stdio(false);
+
+    			std::locale utf8( std::locale(), new std::codecvt_utf8_utf16<wchar_t> );
+    			std::wcout.imbue(utf8);
+			std::wcerr.imbue(utf8);
+			
 			for (fs::directory_iterator itr(dirpath); itr != end_it; ++itr) {
 				current_filename = itr->path().filename().wstring();
 				if (parser.splitString(current_filename, L'.').back() == L"mp3") {
@@ -78,7 +85,8 @@ int main(int argc, const char* argv[]) {
 						std::wcerr << "There was an error tagging the file " << current_filename << "\n";
 					}
 					count++;
-					std::wcout << "Done " << count << " of " << total << "\n";
+					
+					std::wcout << "Done " << count << " of " << total << " - " << current_filename << "\n";
 				}
 			}
 		}
