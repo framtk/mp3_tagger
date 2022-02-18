@@ -6,10 +6,10 @@
 #include <sstream>
 #include <sys/stat.h>
 
-std::vector<std::string> Parser::splitString(std::string str, char splitChar) {
-    std::stringstream temp(str);
-    std::string segment;
-    std::vector<std::string> seglist;
+std::vector<std::wstring> Parser::splitString(std::wstring str, wchar_t splitChar) {
+    std::wstringstream temp(str);
+    std::wstring segment;
+    std::vector<std::wstring> seglist;
 
     while(std::getline(temp, segment, splitChar)) {
         if (!segment.empty())
@@ -18,9 +18,9 @@ std::vector<std::string> Parser::splitString(std::string str, char splitChar) {
     return seglist;
 }
 
-bool Parser::fileExists (const std::string& name) {
-    struct stat buffer{};
-    return (stat (name.c_str(), &buffer) == 0);
+bool Parser::fileExists (const std::wstring& name) {
+    struct _stat64i32 buffer{};
+    return (_wstat(name.c_str(), &buffer) == 0);
 }
 
 bool Parser::isDir (const std::string& name) {
@@ -33,19 +33,19 @@ bool Parser::isDir (const std::string& name) {
     return false;
 }
 
-void Parser::ltrim(std::string &s) {
+void Parser::ltrim(std::wstring &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
         return !std::isspace(ch);
     }));
 }
 
-void Parser::rtrim(std::string &s) {
+void Parser::rtrim(std::wstring &s) {
     s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
         return !std::isspace(ch);
     }).base(), s.end());
 }
 
-void Parser::trim(std::string &s) {
+void Parser::trim(std::wstring &s) {
     ltrim(s);
     rtrim(s);
 }
