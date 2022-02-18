@@ -18,7 +18,32 @@ std::vector<std::wstring> Parser::splitString(std::wstring str, wchar_t splitCha
 }
 
 bool Parser::fileExists (const std::wstring& name) {
-    return (_waccess(src.c_str(), 0) == 0);
+#ifdef WIN32
+    return (_waccess(name.c_str(), 0) == 0);
+#else
+    // Max bytes plusterminator
+    size_t outSize = name.size() * sizeof(wchar_t) + 1;
+    
+    char* conv = new char[outSize]; 
+    memset(conv, 0, outSize);
+
+    char* oldLocale = setlocale(LC_ALL, NULL);
+    setlocale(LC_ALL, "en_US.UTF-8");
+
+    size_t wcsSize = wcstombs(conv, name.c_str(), outSize);
+    
+    setlocale(LC_ALL, oldLocale);
+
+    bool file_exists = false;
+    
+    if (access(conv, F_OK) == 0){
+        file_exists = true;
+    }
+    
+    delete[] conv;
+    
+    return file_exists;
+#endif
 }
 
 bool Parser::isDir (const std::string& name) {
