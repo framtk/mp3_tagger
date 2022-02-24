@@ -75,8 +75,8 @@ int main(int argc, const char* argv[]) {
 			// This fixed wcout breaking for some characters when printing
 			std::ios_base::sync_with_stdio(false);
 
-    			std::locale utf8( std::locale(), new std::codecvt_utf8_utf16<wchar_t> );
-    			std::wcout.imbue(utf8);
+			std::locale utf8(std::locale(), new std::codecvt_utf8_utf16<wchar_t>);
+			std::wcout.imbue(utf8);
 			std::wcerr.imbue(utf8);
 
 			for (fs::directory_iterator itr(dirpath); itr != end_it; ++itr) {

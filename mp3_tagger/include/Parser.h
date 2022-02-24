@@ -12,15 +12,15 @@
 #include <string>
 
 class Parser {
-    public:
-        std::vector<std::wstring> splitString(std::wstring str, wchar_t splitChar);
-        bool fileExists (const std::wstring& name);
-        bool isDir (const std::string& name);
-        void ltrim (std::wstring &s);
-        void rtrim (std::wstring &s);
-        void trim (std::wstring &s);
+public:
+	std::vector<std::wstring> splitString(std::wstring str, wchar_t splitChar);
+	bool fileExists(const std::wstring& name);
+	bool isDir(const std::string& name);
+	void ltrim(std::wstring& s);
+	void rtrim(std::wstring& s);
+	void trim(std::wstring& s);
 
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 };
 
 

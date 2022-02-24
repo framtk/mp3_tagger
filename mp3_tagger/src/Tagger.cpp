@@ -48,33 +48,33 @@ bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_n
 
 		if (parser.fileExists(song_stream_jpg.str())) {
 #ifdef __linux__
-            linux_stream << parser.converter.to_bytes(song_stream_jpg.str());
-            image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
+			linux_stream << parser.converter.to_bytes(song_stream_jpg.str());
+			image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
 #else
-            image = std::ifstream(song_stream_jpg.str(), std::ios::binary | std::ios::ate);
+			image = std::ifstream(song_stream_jpg.str(), std::ios::binary | std::ios::ate);
 #endif
 
 		}
 		else if (parser.fileExists(song_stream_jpeg.str())) {
 #ifdef __linux__
-            linux_stream << parser.converter.to_bytes(song_stream_jpeg.str());
-            image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
+			linux_stream << parser.converter.to_bytes(song_stream_jpeg.str());
+			image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
 #else
 			image = std::ifstream(song_stream_jpeg.str(), std::ios::binary | std::ios::ate);
 #endif
 		}
 		else if (parser.fileExists(author_stream_jpg.str())) {
 #ifdef __linux__
-            linux_stream << parser.converter.to_bytes(author_stream_jpg.str());
-            image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
+			linux_stream << parser.converter.to_bytes(author_stream_jpg.str());
+			image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
 #else
 			image = std::ifstream(author_stream_jpg.str(), std::ios::binary | std::ios::ate);
 #endif
 		}
 		else if (parser.fileExists(author_stream_jpeg.str())) {
 #ifdef __linux__
-            linux_stream << parser.converter.to_bytes(author_stream_jpeg.str());
-            image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
+			linux_stream << parser.converter.to_bytes(author_stream_jpeg.str());
+			image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
 #else
 			image = std::ifstream(author_stream_jpeg.str(), std::ios::binary | std::ios::ate);
 #endif

@@ -19,11 +19,11 @@ namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
 class Tagger {
-    public:
-        bool addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_name, std::wstring author, std::wstring image_folder);
-        bool tagFile(fs::directory_iterator mp3_path_itr, std::wstring song_name, std::wstring author);
-        bool removeTags(fs::directory_iterator mp3_path_itr);
-        bool apply(po::variables_map vm, fs::directory_iterator file_path_itr);
+public:
+	bool addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_name, std::wstring author, std::wstring image_folder);
+	bool tagFile(fs::directory_iterator mp3_path_itr, std::wstring song_name, std::wstring author);
+	bool removeTags(fs::directory_iterator mp3_path_itr);
+	bool apply(po::variables_map vm, fs::directory_iterator file_path_itr);
 };
 
 
