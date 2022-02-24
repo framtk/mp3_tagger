@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="mp3_tagger" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/mp3_tagger" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DBoost_USE_STATIC_LIBS" />
+					<Add directory="../../code_dependencies/taglib/include" />
+					<Add directory="../../code_dependencies/boost/include" />
+				</Compiler>
+				<Linker>
+					<Add library="../../code_dependencies/taglib/lib/Linux/Debug/libtag.a" />
+					<Add directory="../../code_dependencies/boost/lib/linux" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/mp3_tagger" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="../../code_dependencies/taglib/include" />
+					<Add directory="../../code_dependencies/boost/include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="../../code_dependencies/taglib/lib/Linux/Release/libtag.a" />
+					<Add directory="../../code_dependencies/boost/lib/linux" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="mp3_tagger/include/Parser.h" />
+		<Unit filename="mp3_tagger/include/Tagger.h" />
+		<Unit filename="mp3_tagger/src/Parser.cpp" />
+		<Unit filename="mp3_tagger/src/Tagger.cpp" />
+		<Unit filename="mp3_tagger/src/main.cpp" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

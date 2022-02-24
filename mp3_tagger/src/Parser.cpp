@@ -4,6 +4,13 @@
 
 #include "../include/Parser.h"
 #include <sstream>
+#include <cstring>
+#include <algorithm>
+
+#ifdef __linux__
+#include <unistd.h>
+#include <sys/stat.h>
+#endif
 
 std::vector<std::wstring> Parser::splitString(std::wstring str, wchar_t splitChar) {
     std::wstringstream temp(str);
@@ -23,25 +30,25 @@ bool Parser::fileExists (const std::wstring& name) {
 #else
     // Max bytes plusterminator
     size_t outSize = name.size() * sizeof(wchar_t) + 1;
-    
-    char* conv = new char[outSize]; 
+
+    char* conv = new char[outSize];
     memset(conv, 0, outSize);
 
     char* oldLocale = setlocale(LC_ALL, NULL);
     setlocale(LC_ALL, "en_US.UTF-8");
 
     size_t wcsSize = wcstombs(conv, name.c_str(), outSize);
-    
+
     setlocale(LC_ALL, oldLocale);
 
     bool file_exists = false;
-    
+
     if (access(conv, F_OK) == 0){
         file_exists = true;
     }
-    
+
     delete[] conv;
-    
+
     return file_exists;
 #endif
 }

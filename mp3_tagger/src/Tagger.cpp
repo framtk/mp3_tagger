@@ -42,17 +42,42 @@ bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_n
 
 		std::ifstream image;
 
+#ifdef __linux__
+		std::stringstream linux_stream;
+#endif
+
 		if (parser.fileExists(song_stream_jpg.str())) {
-			image = std::ifstream(song_stream_jpg.str(), std::ios::binary | std::ios::ate);
+#ifdef __linux__
+            linux_stream << parser.converter.to_bytes(song_stream_jpg.str());
+            image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
+#else
+            image = std::ifstream(song_stream_jpg.str(), std::ios::binary | std::ios::ate);
+#endif
+
 		}
 		else if (parser.fileExists(song_stream_jpeg.str())) {
+#ifdef __linux__
+            linux_stream << parser.converter.to_bytes(song_stream_jpeg.str());
+            image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
+#else
 			image = std::ifstream(song_stream_jpeg.str(), std::ios::binary | std::ios::ate);
+#endif
 		}
 		else if (parser.fileExists(author_stream_jpg.str())) {
+#ifdef __linux__
+            linux_stream << parser.converter.to_bytes(author_stream_jpg.str());
+            image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
+#else
 			image = std::ifstream(author_stream_jpg.str(), std::ios::binary | std::ios::ate);
+#endif
 		}
 		else if (parser.fileExists(author_stream_jpeg.str())) {
+#ifdef __linux__
+            linux_stream << parser.converter.to_bytes(author_stream_jpeg.str());
+            image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
+#else
 			image = std::ifstream(author_stream_jpeg.str(), std::ios::binary | std::ios::ate);
+#endif
 		}
 		else {
 			std::cerr << "No file named " << song_name << ".jpg" << ", " << song_name << ".jpeg" << ", " << author << ".jpg" << " or " << author << ".jpeg" << " in " << image_folder << "\n";
@@ -75,7 +100,7 @@ bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_n
 		mp3_file.save(TagLib::MPEG::File::ID3v2);
 
 		delete picture;
-		
+
 		return true;
 
 	}
@@ -131,7 +156,7 @@ bool Tagger::tagFile(fs::directory_iterator mp3_path_itr, std::wstring song_name
 		mp3_file.save(TagLib::MPEG::File::ID3v2);
 
 		delete url;
-		
+
 	}
 	catch (std::exception) {
 		return false;
