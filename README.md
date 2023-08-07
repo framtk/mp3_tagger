@@ -13,9 +13,7 @@ How to compile
 ----
 ***Linux:***
 
-Move to the program directory, open **CMakeLists.txt** and edit the TagLib path to your local TagLib. After having edited the file run ***cmake CmakeLists.txt***, then run ***make*** and an executable called ***mp3_tagger*** should be created in the same directory.  
-
-Alternatively it's possible to download the latest release from GitHub.
+A CodeBlocks .cbp file is available, change the paths to the libraries accordingly with your local paths if needed and it should compile out of the box.
 
 ***Windows:***
 
