@@ -16,6 +16,8 @@
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
+std::vector<std::string> _supported_types = { ".jpg", ".jpeg" };
+
 bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_name, std::wstring author, std::wstring image_folder) {
 	try {
 
@@ -28,62 +30,39 @@ bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_n
 		// remove previous pictures to not have the mp3 file grow infinitely
 		mp3_tag->removeFrames("APIC");
 
-		std::wstringstream song_stream_jpg;
-		song_stream_jpg << image_folder << DIR_SEPARATOR << song_name << ".jpg";
-
-		std::wstringstream song_stream_jpeg;
-		song_stream_jpeg << image_folder << DIR_SEPARATOR << song_name << ".jpeg";
-
-		std::wstringstream author_stream_jpg;
-		author_stream_jpg << image_folder << DIR_SEPARATOR << author << ".jpg";
-
-		std::wstringstream author_stream_jpeg;
-		author_stream_jpeg << image_folder << DIR_SEPARATOR << author << ".jpeg";
-
+		std::wstringstream temp_stream;
 		std::ifstream image;
 
-#ifdef __linux__
-		std::stringstream linux_stream;
-#endif
+		for (std::string type : _supported_types) {
+			temp_stream.clear();
+			temp_stream << image_folder << DIR_SEPARATOR << song_name << type.c_str();
 
-		if (parser.fileExists(song_stream_jpg.str())) {
-#ifdef __linux__
-			linux_stream << parser.converter.to_bytes(song_stream_jpg.str());
-			image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
-#else
-			image = std::ifstream(song_stream_jpg.str(), std::ios::binary | std::ios::ate);
-#endif
+			if (parser.fileExists(temp_stream.str())) {
+				break;
+			}
 
+			temp_stream.clear();
+			temp_stream << image_folder << DIR_SEPARATOR << author << type.c_str();
+
+			if (parser.fileExists(temp_stream.str())) {
+				break;
+			}
 		}
-		else if (parser.fileExists(song_stream_jpeg.str())) {
-#ifdef __linux__
-			linux_stream << parser.converter.to_bytes(song_stream_jpeg.str());
-			image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
-#else
-			image = std::ifstream(song_stream_jpeg.str(), std::ios::binary | std::ios::ate);
-#endif
-		}
-		else if (parser.fileExists(author_stream_jpg.str())) {
-#ifdef __linux__
-			linux_stream << parser.converter.to_bytes(author_stream_jpg.str());
-			image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
-#else
-			image = std::ifstream(author_stream_jpg.str(), std::ios::binary | std::ios::ate);
-#endif
-		}
-		else if (parser.fileExists(author_stream_jpeg.str())) {
-#ifdef __linux__
-			linux_stream << parser.converter.to_bytes(author_stream_jpeg.str());
-			image = std::ifstream(linux_stream.str(), std::ios::binary | std::ios::ate);
-#else
-			image = std::ifstream(author_stream_jpeg.str(), std::ios::binary | std::ios::ate);
-#endif
-		}
-		else {
+
+		if (!parser.fileExists(temp_stream.str())) {
 			std::cerr << "No file named " << song_name << ".jpg" << ", " << song_name << ".jpeg" << ", " << author << ".jpg" << " or " << author << ".jpeg" << " in " << image_folder << "\n";
 			return false;
 		}
 
+		std::wstringstream image_stream;
+
+#ifdef _WIN32
+		image_stream << temp_stream.rdbuf();
+#else
+		image_stream << parser.converter.to_bytes(temp_stream.str());
+#endif
+
+		image = std::ifstream(image_stream.str(), std::ios::binary | std::ios::ate);
 
 		const auto fileSize = image.tellg();
 		image.seekg(0);
@@ -99,12 +78,9 @@ bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_n
 		mp3_tag->addFrame(picture);
 		mp3_file.save(TagLib::MPEG::File::ID3v2);
 
-		delete picture;
-
 		return true;
 
-	}
-	catch (std::exception) {
+	} catch (std::exception) {
 		return false;
 	}
 }
@@ -131,8 +107,7 @@ bool Tagger::removeTags(fs::directory_iterator mp3_path_itr) {
 
 		return true;
 
-	}
-	catch (std::exception) {
+	} catch (std::exception) {
 		return false;
 	}
 }
@@ -155,10 +130,7 @@ bool Tagger::tagFile(fs::directory_iterator mp3_path_itr, std::wstring song_name
 
 		mp3_file.save(TagLib::MPEG::File::ID3v2);
 
-		delete url;
-
-	}
-	catch (std::exception) {
+	} catch (std::exception) {
 		return false;
 	}
 	return true;
@@ -209,8 +181,7 @@ bool Tagger::apply(po::variables_map vm, fs::directory_iterator file_path_itr) {
 				return false;
 			}
 		}
-	}
-	catch (std::exception) {
+	} catch (std::exception) {
 		return false;
 	}
 	return true;
