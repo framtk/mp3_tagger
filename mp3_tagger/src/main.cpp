@@ -5,11 +5,20 @@
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
 int main(int argc, const char* argv[]) {
 	try {
+
+#ifdef _WIN32
+		SetConsoleOutputCP(65001);
+#endif
+
 		po::options_description desc("Allowed options");
 		desc.add_options()
 			("help,h", "Produce help message")
@@ -95,8 +104,7 @@ int main(int argc, const char* argv[]) {
 		std::cout << "Tagging complete, enjoy your music!\n";
 
 		return 0;
-	}
-	catch (std::exception& e) {
+	} catch (std::exception& e) {
 		std::cerr << "Error: " << e.what() << ", application will now exit" << std::endl;
 		return 2;
 	}
