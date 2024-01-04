@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cstring>
 #include <algorithm>
+#include <cwctype>
 
 #ifdef __linux__
 #include <unistd.h>
@@ -64,14 +65,14 @@ bool Parser::isDir(const std::string& name) {
 }
 
 void Parser::ltrim(std::wstring& s) {
-	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
-		return !std::isspace(ch);
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](wint_t ch) {
+		return !std::iswspace(ch);
 		}));
 }
 
 void Parser::rtrim(std::wstring& s) {
-	s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
-		return !std::isspace(ch);
+	s.erase(std::find_if(s.rbegin(), s.rend(), [](wint_t ch) {
+		return !std::iswspace(ch);
 		}).base(), s.end());
 }
 
