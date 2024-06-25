@@ -11,15 +11,10 @@ I am by no means and expert in C++ so if you find any problems and/or want to pr
 
 How to compile
 ----
-***Linux:***
 
-A CodeBlocks .cbp file is available, change the paths to the libraries accordingly with your local paths if needed and it should compile out of the box.
+A Visual Studio 2022 solution is available, change the paths to the libraries accordingly with your local paths if needed and it should compile out of the box.
 
-***Windows:***
-
-A Visual Studio 2019 solution is available, change the paths to the libraries accordingly with your local paths if needed and it should compile out of the box.
-
-It should also work with Visual Studio 2015 and 2017 but I haven't tested it
+It should also work with Visual Studio 2015, 2017 and 2019 but I haven't tested it
  
  How to run
 ----
