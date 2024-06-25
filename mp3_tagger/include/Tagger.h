@@ -9,11 +9,7 @@
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
 
-#ifdef _WIN32
 #define DIR_SEPARATOR "\\"
-#else
-#define DIR_SEPARATOR "/"
-#endif
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;

@@ -56,11 +56,7 @@ bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_n
 
 		std::wstringstream image_stream;
 
-#ifdef _WIN32
 		image_stream << temp_stream.rdbuf();
-#else
-		image_stream << parser.converter.to_bytes(temp_stream.str());
-#endif
 
 		image = std::ifstream(image_stream.str(), std::ios::binary | std::ios::ate);
 

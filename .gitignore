@@ -1,6 +1,7 @@
 .idea
 .DS_Store
 cmake-build-debug/*
+mp3_tagger.cbp
 
 ## From here on the suggested VisualStudio gitignore file is used
 

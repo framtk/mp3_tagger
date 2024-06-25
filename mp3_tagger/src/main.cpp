@@ -4,20 +4,14 @@
 #include "../include/Tagger.h"
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
-
-#ifdef _WIN32
 #include <windows.h>
-#endif
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
 int main(int argc, const char* argv[]) {
 	try {
-
-#ifdef _WIN32
 		SetConsoleOutputCP(65001);
-#endif
 
 		po::options_description desc("Allowed options");
 		desc.add_options()
