@@ -2,8 +2,7 @@
 // Created by francesco simone arrigo on 21.09.17.
 //
 
-#ifndef MP3_TAG_FROM_TITLE_PARSER_H
-#define MP3_TAG_FROM_TITLE_PARSER_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -23,4 +22,4 @@ public:
 };
 
 
-#endif //MP3_TAG_FROM_TITLE_PARSER_H
+

@@ -2,8 +2,7 @@
 // Created by francesco simone arrigo on 29.09.17.
 //
 
-#ifndef MP3_TAG_FROM_TITLE_TAGGER_H
-#define MP3_TAG_FROM_TITLE_TAGGER_H
+#pragma once
 
 #include <string>
 #include <boost/program_options.hpp>
@@ -23,4 +22,4 @@ public:
 };
 
 
-#endif //MP3_TAG_FROM_TITLE_TAGGER_H
+

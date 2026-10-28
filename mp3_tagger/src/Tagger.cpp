@@ -27,7 +27,7 @@ bool Tagger::addPicture(const fs::directory_entry& mp3_path_entry, std::wstring 
         std::wstringstream temp_stream;
         std::ifstream image;
 
-        for (std::string type : supported_types) {
+        for (const auto& type : supported_types) {
             temp_stream.clear();
             temp_stream << image_folder << DIR_SEPARATOR << song_name << type.c_str();
             if (parser.fileExists(temp_stream.str())) {
