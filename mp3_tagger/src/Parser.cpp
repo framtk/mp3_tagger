@@ -4,6 +4,7 @@
 
 #include "../include/Parser.h"
 #include <windows.h>
+#include <filesystem>
 #include <cstring>
 #include <algorithm>
 #include <cwctype>
@@ -26,13 +27,7 @@ bool Parser::fileExists(const std::wstring& name) {
 }
 
 bool Parser::isDir(const std::string& name) {
-	struct stat buffer {};
-	if (stat(name.c_str(), &buffer) == 0) {
-		if (buffer.st_mode & S_IFDIR) {
-			return true;
-		}
-	}
-	return false;
+	return std::filesystem::is_directory(name);
 }
 
 std::wstring Parser::string_to_wstring(const std::string& s) {

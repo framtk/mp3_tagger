@@ -2,14 +2,14 @@
 
 #include "../include/Parser.h"
 #include "../include/Tagger.h"
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <boost/program_options.hpp>
 #include <windows.h>
 #include <fcntl.h>
 #include <io.h>
 
 namespace po = boost::program_options;
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 int main(int argc, const char* argv[]) {
 	try {
@@ -54,8 +54,8 @@ int main(int argc, const char* argv[]) {
 			}
 
 			fs::path file_path = filename;
-			fs::directory_iterator itr(filename);
-			if (!tagger.apply(vm, itr)) {
+			const fs::directory_entry entry(filename);
+			if (!tagger.apply(vm, entry)) {
 				std::wcerr << "There was an error tagging the file " << filename << "\n";
 				return 2;
 			}
@@ -74,8 +74,8 @@ int main(int argc, const char* argv[]) {
 
 			fs::path dirpath = dirname;
 			fs::directory_iterator end_it;
-			for (fs::directory_iterator itr(dirpath); itr != end_it; ++itr) {
-				current_filename = itr->path().filename().wstring();
+			for (auto &entry : fs::directory_iterator(dirpath)) {
+				current_filename = entry.path().filename().wstring();
 				if (parser.splitString(current_filename, L'.').back() == L"mp3")
 					total++;
 			}
@@ -83,10 +83,10 @@ int main(int argc, const char* argv[]) {
 			// This fixed wcout breaking for some characters when printing
 			std::ios_base::sync_with_stdio(false);
 
-			for (fs::directory_iterator itr(dirpath); itr != end_it; ++itr) {
-				current_filename = itr->path().filename().wstring();
+			for (auto &entry : fs::directory_iterator(dirpath)) {
+				current_filename = entry.path().filename().wstring();
 				if (parser.splitString(current_filename, L'.').back() == L"mp3") {
-					if (!tagger.apply(vm, itr)) {
+					if (!tagger.apply(vm, entry)) {
 						std::wcerr << "There was an error tagging the file " << current_filename << "\n";
 					}
 					count++;

@@ -8,7 +8,6 @@
 #include <vector>
 #include <string>
 #include <locale>
-// removed codecvt include
 #include <string>
 
 class Parser {
@@ -21,8 +20,6 @@ public:
 	void ltrim(std::wstring& s);
 	void rtrim(std::wstring& s);
 	void trim(std::wstring& s);
-
-	// no converter member
 };
 
 

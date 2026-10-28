@@ -11,19 +11,21 @@
 #include <taglib/attachedpictureframe.h>
 #include <fstream>
 #include <taglib/urllinkframe.h>
-#include <boost/filesystem.hpp>
+#include <filesystem>
+#include <windows.h>
+
 
 namespace po = boost::program_options;
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 std::vector<std::string> _supported_types = { ".jpg", ".jpeg" };
 
-bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_name, std::wstring author, std::wstring image_folder) {
+bool Tagger::addPicture(const fs::directory_entry& mp3_path_entry, std::wstring song_name, std::wstring author, std::wstring image_folder) {
 	try {
 
 		Parser parser;
 
-		TagLib::MPEG::File mp3_file(mp3_path_itr->path().c_str());
+		TagLib::MPEG::File mp3_file(mp3_path_entry.path().c_str());
 		TagLib::ID3v2::Tag* mp3_tag;
 		mp3_tag = mp3_file.ID3v2Tag(true);
 
@@ -81,11 +83,11 @@ bool Tagger::addPicture(fs::directory_iterator mp3_path_itr, std::wstring song_n
 	}
 }
 
-bool Tagger::removeTags(fs::directory_iterator mp3_path_itr) {
+bool Tagger::removeTags(const fs::directory_entry& mp3_path_entry) {
 
 	try {
 
-		TagLib::MPEG::File mp3_file(mp3_path_itr->path().c_str());
+		TagLib::MPEG::File mp3_file(mp3_path_entry.path().c_str());
 		TagLib::ID3v2::Tag* mp3_tag;
 		mp3_tag = mp3_file.ID3v2Tag(true);
 
@@ -108,10 +110,10 @@ bool Tagger::removeTags(fs::directory_iterator mp3_path_itr) {
 	}
 }
 
-bool Tagger::tagFile(fs::directory_iterator mp3_path_itr, std::wstring song_name, std::wstring author) {
+bool Tagger::tagFile(const fs::directory_entry& mp3_path_entry, std::wstring song_name, std::wstring author) {
 	try {
 
-		TagLib::MPEG::File mp3_file(mp3_path_itr->path().c_str());
+		TagLib::MPEG::File mp3_file(mp3_path_entry.path().c_str());
 		TagLib::ID3v2::Tag* mp3_tag;
 		mp3_tag = mp3_file.ID3v2Tag(true);
 
@@ -132,14 +134,14 @@ bool Tagger::tagFile(fs::directory_iterator mp3_path_itr, std::wstring song_name
 	return true;
 }
 
-bool Tagger::apply(po::variables_map vm, fs::directory_iterator file_path_itr) {
+bool Tagger::apply(po::variables_map vm, const fs::directory_entry& file_path_entry) {
 
 	try {
 		bool verbose = vm.count("verbose") != 0;
 
 		Parser parser;
 
-		std::wstring song_name = file_path_itr->path().filename().wstring();
+		std::wstring song_name = file_path_entry.path().filename().wstring();
 		song_name.erase(song_name.length() - 4);
 		std::wstring author = parser.splitString(song_name, L'-')[0];
 		std::wstring song_title = parser.splitString(song_name, L'-')[1];
@@ -151,7 +153,7 @@ bool Tagger::apply(po::variables_map vm, fs::directory_iterator file_path_itr) {
 		if (vm.count("clear")) {
 			if (verbose)
 				std::wcout << "Clearing " << song_name << " tags...\n";
-			if (!removeTags(file_path_itr)) {
+			if (!removeTags(file_path_entry)) {
 				std::wcerr << "There was an error removing the tags of " << song_name << "\n";
 				return false;
 			};
@@ -161,7 +163,7 @@ bool Tagger::apply(po::variables_map vm, fs::directory_iterator file_path_itr) {
 		if (vm.count("tag")) {
 			if (verbose)
 				std::wcout << "Tagging " << song_name << "...\n";
-			if (!tagFile(file_path_itr, song_title, author)) {
+			if (!tagFile(file_path_entry, song_title, author)) {
 				std::wcerr << "There was an error tagging " << song_name << "\n";
 				return false;
 			}
@@ -172,7 +174,7 @@ bool Tagger::apply(po::variables_map vm, fs::directory_iterator file_path_itr) {
 			if (verbose)
 				std::wcout << "Setting " << song_name << " picture...\n";
 
-			if (!addPicture(file_path_itr, song_name, author, image_dir)) {
+			if (!addPicture(file_path_entry, song_name, author, image_dir)) {
 				std::wcerr << "There was an error setting picture for " << song_name << "\n";
 				return false;
 			}
