@@ -23,7 +23,7 @@ std::vector<std::wstring> Parser::splitString(std::wstring str, wchar_t splitCha
 }
 
 bool Parser::fileExists(const std::wstring& name) {
-	return (_waccess(name.c_str(), 0) == 0);
+	return std::filesystem::exists(name);
 }
 
 bool Parser::isDir(const std::string& name) {

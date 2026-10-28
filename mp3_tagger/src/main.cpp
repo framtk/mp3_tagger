@@ -1,4 +1,5 @@
 #include <iostream>
+#include <format>
 
 #include "../include/Parser.h"
 #include "../include/Tagger.h"
@@ -38,7 +39,7 @@ int main(int argc, const char* argv[]) {
 		_setmode(_fileno(stderr), _O_U16TEXT);
 
 		if (!(vm.count("file") || vm.count("dir"))) {
-			std::wcerr << "Please select a file or a directory \nUse --help or -h to show the available arguments\n";
+			std::wcerr << std::format(L"Please select a file or a directory. \nUse --help or -h to show the available arguments\n");
 			return 1;
 		}
 
