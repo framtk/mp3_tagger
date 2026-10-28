@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 #include <locale>
-#include <codecvt>
+// removed codecvt include
 #include <string>
 
 class Parser {
@@ -16,11 +16,13 @@ public:
 	std::vector<std::wstring> splitString(std::wstring str, wchar_t splitChar);
 	bool fileExists(const std::wstring& name);
 	bool isDir(const std::string& name);
+	std::wstring string_to_wstring(const std::string& s);
+	std::string wstring_to_string(const std::wstring& ws);
 	void ltrim(std::wstring& s);
 	void rtrim(std::wstring& s);
 	void trim(std::wstring& s);
 
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	// no converter member
 };
 
 

@@ -150,7 +150,7 @@ bool Tagger::apply(po::variables_map vm, fs::directory_iterator file_path_itr) {
 
 		if (vm.count("clear")) {
 			if (verbose)
-				std::cout << "Clearing " << song_name << " tags...\n";
+				std::wcout << "Clearing " << song_name << " tags...\n";
 			if (!removeTags(file_path_itr)) {
 				std::wcerr << "There was an error removing the tags of " << song_name << "\n";
 				return false;
@@ -160,7 +160,7 @@ bool Tagger::apply(po::variables_map vm, fs::directory_iterator file_path_itr) {
 
 		if (vm.count("tag")) {
 			if (verbose)
-				std::cout << "Tagging " << song_name << "...\n";
+				std::wcout << "Tagging " << song_name << "...\n";
 			if (!tagFile(file_path_itr, song_title, author)) {
 				std::wcerr << "There was an error tagging " << song_name << "\n";
 				return false;
@@ -168,7 +168,7 @@ bool Tagger::apply(po::variables_map vm, fs::directory_iterator file_path_itr) {
 		}
 
 		if (vm.count("picture")) {
-			std::wstring image_dir = parser.converter.from_bytes(vm["picture"].as<std::string>());
+			std::wstring image_dir = parser.string_to_wstring(vm["picture"].as<std::string>());
 			if (verbose)
 				std::wcout << "Setting " << song_name << " picture...\n";
 

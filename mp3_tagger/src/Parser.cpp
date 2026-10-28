@@ -3,10 +3,11 @@
 //
 
 #include "../include/Parser.h"
-#include <sstream>
+#include <windows.h>
 #include <cstring>
 #include <algorithm>
 #include <cwctype>
+#include <sstream>
 
 std::vector<std::wstring> Parser::splitString(std::wstring str, wchar_t splitChar) {
 	std::wstringstream temp(str);
@@ -32,6 +33,24 @@ bool Parser::isDir(const std::string& name) {
 		}
 	}
 	return false;
+}
+
+std::wstring Parser::string_to_wstring(const std::string& s) {
+	if (s.empty()) return L"";
+	int size = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), (int)s.size(), NULL, 0);
+	if (size == 0) return L"";
+	std::wstring out(size, 0);
+	MultiByteToWideChar(CP_UTF8, 0, s.c_str(), (int)s.size(), &out[0], size);
+	return out;
+}
+
+std::string Parser::wstring_to_string(const std::wstring& ws) {
+	if (ws.empty()) return "";
+	int size = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), NULL, 0, NULL, NULL);
+	if (size == 0) return "";
+	std::string out(size, 0);
+	WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), &out[0], size, NULL, NULL);
+	return out;
 }
 
 void Parser::ltrim(std::wstring& s) {
