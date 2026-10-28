@@ -9,15 +9,15 @@
 #include <fstream>
 #include <filesystem>
 #include <format>
-#include <windows.h>
+#include <array>
 
 using namespace std::string_view_literals;
 namespace po = boost::program_options;
 namespace fs = std::filesystem;
 
-const std::array supported_types = {".jpg", ".jpeg"};
+constexpr std::array<const wchar_t*, 2> supported_types = {L".jpg", L".jpeg"};
 
-bool Tagger::addPicture(const fs::directory_entry& mp3_path_entry, std::wstring song_name, std::wstring author, std::wstring image_folder) {
+bool Tagger::addPicture(const fs::directory_entry& mp3_path_entry, const std::wstring& song_name, const std::wstring& author, const std::wstring& image_folder) {
     try {
         Parser parser;
         TagLib::MPEG::File mp3_file(mp3_path_entry.path().c_str());
@@ -25,16 +25,15 @@ bool Tagger::addPicture(const fs::directory_entry& mp3_path_entry, std::wstring 
         mp3_tag->removeFrames("APIC");
 
         std::wstringstream temp_stream;
-        std::ifstream image;
 
         for (const auto& type : supported_types) {
             temp_stream.clear();
-            temp_stream << image_folder << DIR_SEPARATOR << song_name << type.c_str();
+            temp_stream << image_folder << L'\\' << song_name << type;
             if (parser.fileExists(temp_stream.str())) {
                 break;
             }
             temp_stream.clear();
-            temp_stream << image_folder << DIR_SEPARATOR << author << type.c_str();
+            temp_stream << image_folder << L'\\' << author << type;
             if (parser.fileExists(temp_stream.str())) {
                 break;
             }
@@ -47,7 +46,7 @@ bool Tagger::addPicture(const fs::directory_entry& mp3_path_entry, std::wstring 
 
         std::wstringstream image_stream;
         image_stream << temp_stream.rdbuf();
-        image = std::ifstream(image_stream.str(), std::ios::binary | std::ios::ate);
+        std::ifstream image(std::filesystem::path(temp_stream.str()), std::ios::binary | std::ios::ate);
         const auto fileSize = image.tellg();
         image.seekg(0);
         TagLib::ByteVector image_data((unsigned int)fileSize, 0);
@@ -87,7 +86,7 @@ bool Tagger::removeTags(const fs::directory_entry& mp3_path_entry) {
     }
 }
 
-bool Tagger::tagFile(const fs::directory_entry& mp3_path_entry, std::wstring song_name, std::wstring author) {
+bool Tagger::tagFile(const fs::directory_entry& mp3_path_entry, const std::wstring& song_name, const std::wstring& author) {
     try {
         TagLib::MPEG::File mp3_file(mp3_path_entry.path().c_str());
         TagLib::ID3v2::Tag* mp3_tag = mp3_file.ID3v2Tag(true);

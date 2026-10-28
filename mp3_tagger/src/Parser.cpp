@@ -7,10 +7,11 @@
 #include <filesystem>
 #include <cstring>
 #include <algorithm>
+#include <string>
 #include <cwctype>
 #include <sstream>
 
-std::vector<std::wstring> Parser::splitString(std::wstring str, wchar_t splitChar) {
+std::vector<std::wstring> Parser::splitString(std::wstring str, wchar_t splitChar) const {
 	std::wstringstream temp(str);
 	std::wstring segment;
 	std::vector<std::wstring> seglist;
@@ -22,15 +23,15 @@ std::vector<std::wstring> Parser::splitString(std::wstring str, wchar_t splitCha
 	return seglist;
 }
 
-bool Parser::fileExists(const std::wstring& name) {
+bool Parser::fileExists(const std::wstring& name) const {
 	return std::filesystem::exists(name);
 }
 
-bool Parser::isDir(const std::string& name) {
+bool Parser::isDir(const std::string& name) const {
 	return std::filesystem::is_directory(name);
 }
 
-std::wstring Parser::string_to_wstring(const std::string& s) {
+std::wstring Parser::string_to_wstring(const std::string& s) const {
 	if (s.empty()) return L"";
 	int size = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), (int)s.size(), NULL, 0);
 	if (size == 0) return L"";
@@ -39,7 +40,7 @@ std::wstring Parser::string_to_wstring(const std::string& s) {
 	return out;
 }
 
-std::string Parser::wstring_to_string(const std::wstring& ws) {
+std::string Parser::wstring_to_string(const std::wstring& ws) const {
 	if (ws.empty()) return "";
 	int size = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), NULL, 0, NULL, NULL);
 	if (size == 0) return "";
